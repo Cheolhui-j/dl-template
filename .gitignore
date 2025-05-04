@@ -1,0 +1,20 @@
+# 실험 로그 및 결과 제외
+experiments/
+
+# Python 캐시 파일
+__pycache__/
+*.pyc
+
+# Jupyter 노트북 체크포인트
+.ipynb_checkpoints/
+
+# IDE/에디터 관련 설정 파일 (선택)
+.vscode/
+*.swp
+.DS_Store
+
+# 실제 데이터셋 파일은 별도 디렉터리로 관리
+datasets/
+
+# 로그 파일
+*.log
