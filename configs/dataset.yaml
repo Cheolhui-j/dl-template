@@ -1,4 +1,0 @@
-name: cifar10
-batch_size: 128
-data_dir: ./dataset/cifar10
-num_classes: 10
