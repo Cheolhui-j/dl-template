@@ -1,5 +1,5 @@
 import torch.nn as nn
-from backbone.resnet import ResNet, BasicBlock
+from src.backbone.resnet import ResNet, BasicBlock
 
 class Classification(nn.Module):
     def __init__(self, num_classes=10, backbone="ResNet"):

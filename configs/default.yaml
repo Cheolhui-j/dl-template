@@ -5,6 +5,12 @@ model:
   num_classes: 10
   input_channels: 3
 
+optimizer:
+  name: sgd
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 5e-4
+
 scheduler:
   name: step
   step_size: 10
