@@ -4,6 +4,7 @@ from src.trainers.base_trainer import BaseTrainer
 class classificationTrainer(BaseTrainer):
     def __init__(self, model, optimizer, criterion, device, logger, scheduler=None):
         super().__init__(model, optimizer, criterion, device, logger)
+        self.scheduler= scheduler
 
     def train_one_epoch(self, dataloader):
         self.model.train()

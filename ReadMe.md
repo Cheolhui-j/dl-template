@@ -1,43 +1,110 @@
-# 딥러닝 템플릿 프로젝트
+# Deep Learning Project Template
 
-이 프로젝트는 다양한 딥러닝 모델을 개발하고 실험하기 위한 템플릿 구조를 제공합니다.
+A clean, modular, and extensible deep learning project template built with PyTorch. Designed for training, evaluating, and experimenting with classification tasks (extendable to others).
 
-## 🔧 구성
+---
+
+## 📁 Project Structure
 
 ```
-project_name/
-├── backbone/                 # 커스텀 백본 (ex. ResNet)
-├── tasks/                   # 태스크 별 모델 구조 (classification 등)
-├── trainers/                # 학습 로직
-├── data/                    # 데이터 로딩 코드 (datasets 디렉터리에서 불러옴)
-├── configs/                 # YAML 설정 파일
-├── utils/                   # 유틸리티 함수 (로깅 등)
-├── datasets/                # 실제 데이터셋 위치 (gitignore로 제외됨)
-├── experiments/             # 실험 결과 저장
-├── main.py                  # 학습 실행 진입점
-├── requirements.txt         # 의존성 목록
-└── README.md                # 프로젝트 설명서
+├── configs/
+│   ├── base.yaml         # All training & testing config (backbone, optimizer, scheduler, etc.)
+│
+├── datasets/
+│   └── (external datasets managed here, gitignored)
+│
+├── experiments/
+│   └── exp_YYYY_MM_DD_HHMM/   # Contains init.pth, best.pth, latest.pth, config backup
+│
+├── src/
+│   ├── backbone/
+│   │   └── resnet.py      # ResNet family implementation (18, 34, 50, 101, 152)
+│   │
+│   ├── data/
+│   │   └── cifar10.py     # CIFAR10 loader with transforms
+│   │
+│   ├── evaluators/
+│   │   ├── base_evaluator.py
+│   │   └── classification_evaluator.py
+│   │
+│   ├── models/
+│   │   └── classification.py
+│   │
+│   ├── optimizers/
+│   │   └── factory.py     # Optimizer builder
+│   │
+│   ├── schedulers/
+│   │   └── factory.py     # Scheduler builder
+│   │
+│   ├── trainers/
+│   │   ├── base_trainer.py
+│   │   └── classification_trainer.py
+│   │
+│   └── utils/
+│       └── logger.py
+│
+├── main.py               # Entry point for training
+├── evaluate.py           # Entry point for testing
+├── requirements.txt
+└── README.md
 ```
 
-## 📦 설치
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🚀 실행
+### 2. Train
+
 ```bash
-python main.py
+python main.py --config configs/base.yaml
 ```
 
-## ⚙️ 설정 변경
-- `configs/backbone.yaml`: 백본 이름, 학습률, 에폭 수 설정
-- `configs/dataset.yaml`: 배치 크기, 클래스 수, 경로 설정
+### 3. Evaluate
 
-## 🧪 출력
-- 학습 로그: `experiments/exp001/train.log`
-- config 백업: `experiments/exp001/config.yaml`
-- 모델 저장: `experiments/exp001/latest.pth`, `best.pth` (추후 확장)
+```bash
+python evaluate.py --config configs/base.yaml --checkpoint experiments/exp_xxx/best.pth
+```
 
 ---
 
-이 템플릿은 확장 가능하며, 다양한 태스크와 모델을 쉽게 통합할 수 있도록 설계되어 있습니다.
+## ⚙️ Key Features
+
+* 🔧 **Backbone modifiability**: Clean ResNet support with custom block extension
+* ⚡ **Training/evaluation separation** with evaluator callback
+* 🧪 **Configurable with Hydra/YAML**: all training params, schedulers, and augmentations controlled from config
+* 🧵 **Checkpointing**: saves init, best, latest weights in structured folders
+* 🔁 **Resume training support**
+* 📊 **Logging**: minimal custom logger
+* 📂 **Experiments are fully tracked and reproducible**
+
+---
+
+## 🔄 TODO / Extensions
+
+* [ ] Add a simple training progress UI (e.g., tqdm or custom console visualization)
+* [ ] Add wandb or tensorboard support
+* [ ] Unit tests for trainer and evaluator
+* [ ] CLI with argparse or click
+
+---
+
+## 📌 Notes
+
+* To add a new model: add under `src/backbone/`, modify `build_resnet()` or add new builder
+* To add a new dataset: follow the `src/data/cifar10.py` structure
+* `configs/base.yaml` is the unified config entry point. You can split it later into train/test if needed.
+
+---
+
+## 📬 Contact (TBD)
+
+Author: \[Your Name]
+Email: \[[your\_email@example.com](mailto:your_email@example.com)]
+
+Feel free to open issues or submit pull requests!

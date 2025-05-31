@@ -39,7 +39,7 @@ class Bottleneck(nn.Module):
     def forward(self, x):
         identity = x
         out = self.relu(self.bn1(self.conv1(x)))
-        out = self.relu(self.bn2(self.conv2(x)))
+        out = self.relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
         if self.downsample:
             identity = self.downsample(x)
@@ -74,7 +74,7 @@ class ResNet(nn.Module):
         layers = [block(self.in_channels, out_channels, stride, downsample)]
         self.in_channels = out_channels * block.expansion
         for _ in range(1, blocks):
-            layers.append(block(out_channels, out_channels))
+            layers.append(block(self.in_channels, out_channels))
         return nn.Sequential(*layers)
     
     def forward(self, x):
