@@ -8,6 +8,9 @@ class BaseTrainer(ABC):
         self.device = device
         self.logger = logger
 
+        self.current_epoch = 0
+        self.total_epochs = 0
+
     @abstractmethod
     def train_one_epoch(self, dataloader):
         pass

@@ -1,5 +1,6 @@
 import torch
 from src.trainers.base_trainer import BaseTrainer
+from tqdm import tqdm
 
 class classificationTrainer(BaseTrainer):
     def __init__(self, model, optimizer, criterion, device, logger, scheduler=None):
@@ -9,15 +10,32 @@ class classificationTrainer(BaseTrainer):
     def train_one_epoch(self, dataloader):
         self.model.train()
         running_loss = 0.0
-        for images, labels in dataloader:
+        total = len(dataloader.dataset)
+
+        pbar = tqdm(dataloader, desc=f"[Trainer] Epoch {self.current_epoch+1}/{self.total_epochs}", unit="batch")
+
+        for images, labels in pbar:
             images, labels = images.to(self.device), labels.to(self.device)
+            
             self.opt.zero_grad()
             outputs = self.model(images)
             loss = self.criterion(outputs, labels)
             loss.backward()
             self.opt.step()
-            running_loss += loss.item() * images.size(0)
-        avg_loss = running_loss / len(dataloader.dataset)
+
+            if self.scheduler:
+                self.scheduler.step()
+
+            running_loss += loss.item() * images.size(0)        
+            avg_loss = running_loss / total
+
+            current_lr = self.opt.param_groups[0]['lr']
+
+            pbar.set_postfix({
+                "loss": f"{avg_loss:.4f}",
+                "lr": f"{current_lr:.6f}"
+            })
+
         self.logger.info(f"Train Loss: {avg_loss:.4f}")
         return avg_loss
     
@@ -45,8 +63,11 @@ class classificationTrainer(BaseTrainer):
         if checkpoint_path:
             start_epoch = self.load_checkpoint(checkpoint_path)
 
+        self.total_epochs = epochs
+
         for epoch in range(start_epoch, epochs):
-            self.logger.info(f"Epoch {epoch+1}/{epochs}")
+            self.current_epoch = epoch
+            self.logger.info(f"Epoch {self.current_epoch+1}/{self.total_epochs}")
             self.train_one_epoch(train_loader)
             self.validate(val_loader)
             if self.scheduler:
